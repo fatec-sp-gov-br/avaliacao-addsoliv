@@ -1,53 +1,161 @@
 package br.edu.poo;
 
-public class Personagem {
+import org.junit.jupiter.api.Test;
 
-    private String nome;
-    private int vida;
-    private int ataque;
-    private int defesa;
-    private boolean pocaoUtilizada;
+import static org.junit.jupiter.api.Assertions.*;
 
-    public Personagem(String nome, int vida, int ataque, int defesa) {
-        this.nome = nome;
-        this.vida = vida;
-        this.ataque = ataque;
-        this.defesa = defesa;
-        this.pocaoUtilizada = false; 
+public class PersonagemTest {
+
+    @Test
+    void deveCriarPersonagem() {
+
+        Personagem p =
+                new Personagem(
+                        "Artemis",
+                        30,
+                        8,
+                        3);
+
+        assertEquals("Artemis", p.getNome());
+        assertEquals(30, p.getVida());
     }
 
-    public void atacar(Personagem inimigo) {
-        inimigo.receberDano(this.ataque);
+    @Test
+    void deveReceberDano() {
+
+        Personagem p =
+                new Personagem(
+                        "Artemis",
+                        30,
+                        8,
+                        3);
+
+        p.receberDano(10);
+
+        assertEquals(20, p.getVida());
     }
 
-    public void receberDano(int dano) {
-        int danoReal = dano - this.defesa;
+    @Test
+    void vidaNaoPodeFicarNegativa() {
 
-        if (danoReal > 0) {
-            this.vida -= danoReal;
-        }
+        Personagem p =
+                new Personagem(
+                        "Artemis",
+                        30,
+                        8,
+                        3);
 
-        if (this.vida < 0) {
-            this.vida = 0;
-        }
+        p.receberDano(100);
+
+        assertEquals(0, p.getVida());
     }
 
-    public void usarPocao(Pocao pocao) {
-        if (!this.pocaoUtilizada) {
-            this.vida += pocao.getCura(); 
-            this.pocaoUtilizada = true;
-        }
+    @Test
+    void deveCalcularAtaque() {
+
+        Personagem heroi =
+                new Personagem(
+                        "Heroi",
+                        30,
+                        8,
+                        3);
+
+        Personagem goblin =
+                new Personagem(
+                        "Goblin",
+                        20,
+                        6,
+                        2);
+
+        heroi.atacar(goblin);
+
+        assertEquals(14, goblin.getVida());
     }
 
-    public boolean estaVivo() {
-        return this.vida > 0;
+    @Test
+    void danoMinimoDeveSerUm() {
+
+        Personagem tanque =
+                new Personagem(
+                        "Tanque",
+                        30,
+                        5,
+                        10);
+
+        Personagem guerreiro =
+                new Personagem(
+                        "Guerreiro",
+                        30,
+                        8,
+                        3);
+
+        guerreiro.atacar(tanque);
+
+        assertEquals(29, tanque.getVida());
     }
 
-    public String getNome() {
-        return this.nome;
+    @Test
+    void personagemDerrotadoNaoEstaVivo() {
+
+        Personagem p =
+                new Personagem(
+                        "Heroi",
+                        30,
+                        8,
+                        3);
+
+        p.receberDano(30);
+
+        assertFalse(p.estaVivo());
     }
 
-    public int getVida() {
-        return this.vida;
+    @Test
+    void deveUsarPocao() {
+
+        Personagem heroi =
+                new Personagem(
+                        "Heroi",
+                        30,
+                        8,
+                        3);
+
+        heroi.receberDano(10);
+
+        Pocao pocao =
+                new Pocao(
+                        "Pequena",
+                        5);
+
+        heroi.usarPocao(pocao);
+
+        assertEquals(25, heroi.getVida());
+    }
+
+    @Test
+    void devePermitirApenasUmaPocao() {
+
+        Personagem heroi =
+                new Personagem(
+                        "Heroi",
+                        30,
+                        8,
+                        3);
+
+        heroi.receberDano(20);
+
+        Pocao p1 =
+                new Pocao(
+                        "Pequena",
+                        5);
+
+        Pocao p2 =
+                new Pocao(
+                        "Grande",
+                        20);
+
+        heroi.usarPocao(p1);
+        heroi.usarPocao(p2);
+
+        assertEquals(15, heroi.getVida());
     }
 }
